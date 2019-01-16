@@ -1,0 +1,56 @@
+action (FindStore) {
+  description (Find Stores by location)
+  type(Search)
+  
+  collect {
+    
+    // 여러가지 input을 한 가지의 input처럼 사용할 때 사용합니다. (https://bixbydevelopers.com/dev/docs/reference/type/action.collect.input-group)
+    input-group(search){
+      requires (OneOf)
+      collect{
+        
+        // Geo 라이브러리 캡슐을 사용했습니다. (https://bixbydevelopers.com/dev/docs/dev-guide/developers/library.geo)
+        input (location){
+          type(geo.SearchRegion)
+          min (Optional) max (One)
+          
+          // 기본적으로 selection learning 사용하시려면 selection strategy을 직접 구현하셔야 합니다.
+          // 하지만, 라이브러리 캡슐의 concept을 사용하시는 경우, 이미 해당 캡슐 내에 구현이 되어 있어 따로 selection strategy을 만드실 필요는 없습니다.
+          // (https://bixbydevelopers.com/dev/docs/dev-guide/developers/learning.selection-learning#enabling-selection-learning)
+          default-select {
+            with-learning
+          }   
+        }
+        
+        input (place) {
+          type (geo.PlaceName)
+          min (Optional) max (One)
+        }
+      }
+    }
+  }
+  
+  output (StoreInfo){
+    // 결과에 대한 예외처리를 합니다. 자바스크립트에서 던진 에러를 처리할 수 있습니다.
+    throws{
+      error (NoResult){
+        on-catch {
+          halt {
+            dialog {
+              template-macro (no_result)
+            }
+          }
+        }
+      }
+      unknown-error{
+        on-catch {
+          halt {
+            dialog {
+              template-macro (no_result)
+            }
+          }
+        }
+      }
+    }
+  }
+}
