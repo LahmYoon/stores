@@ -1,3 +1,5 @@
+# [Bixby capsule Example - KR]
+
 # 간단한 식당 찾기 예제 capsule입니다.
 
 - 간단한 selection learning 및 continuative conversaion에 대한 사용법을 알 수 있습니다.
